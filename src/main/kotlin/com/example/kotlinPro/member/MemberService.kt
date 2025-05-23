@@ -1,11 +1,18 @@
 package com.example.kotlinPro.member
 
+import com.example.kotlinPro.tripException.ErrorCode
+import com.example.kotlinPro.tripException.TripException
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+
+private val log = KotlinLogging.logger {}
 
 @Service
 class MemberService(
     private val memberRepository: MemberRepository
+
 ) {
 
     fun registerMember(memberReqDto: MemberReqDto) {
@@ -19,7 +26,10 @@ class MemberService(
     fun updateMember(memberUpdateDto: MemberUpdateDto) {
 
         val member = memberRepository.findByUsername(memberUpdateDto.username)
-            ?: throw IllegalArgumentException("존재하지 않는 사용자입니다: ${memberUpdateDto.username}")
+            ?: run {
+                log.warn { "회원 정보를 찾을 수 없습니다. (수정 실패) username: ${memberUpdateDto.username}" }
+                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
+            }
 
         member.updateMember(
             memberUpdateDto.name,
@@ -36,7 +46,10 @@ class MemberService(
     fun deleteMember(username: String) {
 
         val deleteMember = memberRepository.findByUsername(username)
-            ?: throw IllegalArgumentException("존재하지 않는 사용자입니다: $username")
+            ?: run {
+                log.warn { "회원 정보를 찾을 수 없습니다. (삭제 실패) username: $username"}
+                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
+            }
 
         memberRepository.delete(deleteMember)
 
