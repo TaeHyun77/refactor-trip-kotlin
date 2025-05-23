@@ -31,6 +31,9 @@ dependencies {
 	// Mysql 의존성
 	implementation("mysql:mysql-connector-java:8.0.33")
 	implementation("mysql:mysql-connector-java")
+
+	// log
+	implementation("io.github.oshai:kotlin-logging-jvm:5.1.4")
 }
 
 kotlin {
