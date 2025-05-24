@@ -4,6 +4,8 @@ import com.example.kotlinPro.member.Member
 
 data class PostReqDto (
 
+    val id: Long,
+
     var title: String,
 
     var content: String,
@@ -21,10 +23,8 @@ data class PostReqDto (
     var category: String,
 
     var status: Boolean = false,
-
-    val member: Member
-){
-    fun toPostEntity(): Post{
+    ){
+    fun toPostEntity(member: Member): Post{
         return Post(
             title = title,
             content = content,

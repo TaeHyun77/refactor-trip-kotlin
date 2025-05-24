@@ -7,6 +7,9 @@ enum class ErrorCode (
 
     UNKNOWN("000_UNKNOWN", "알 수 없는 에러가 발생했습니다."),
 
-    MEMBER_NOT_FOUND("MEMBER_NOT_FOUND", "사용자를 찾을 수 없습니다.")
+    MEMBER_NOT_FOUND("MEMBER_NOT_FOUND", "사용자를 찾을 수 없습니다."),
+
+    POST_NOT_FOUND("MEMBER_NOT_FOUND", "게시글을 찾을 수 없습니다.")
+
 
 }
