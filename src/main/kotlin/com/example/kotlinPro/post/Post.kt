@@ -32,13 +32,24 @@ class Post(
 
     var people: Int,
 
-    var category: String,
+    // 동행글 or 자유글
+    val category: String,
 
     var status: Boolean = false,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    val member: Member,
+    var member: Member,
 
     ): BaseTime() {
+
+    fun editPost(title: String, content: String, mbti: String, place: String, viewCnt: Int, people: Int, status: Boolean) {
+        this.title = title
+        this.content = content
+        this.mbti = mbti
+        this.place = place
+        this.viewCnt = viewCnt
+        this.people = people
+        this.status = status
+    }
 }
