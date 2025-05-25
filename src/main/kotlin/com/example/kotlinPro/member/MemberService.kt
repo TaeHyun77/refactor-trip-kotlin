@@ -5,20 +5,23 @@ import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 private val log = KotlinLogging.logger {}
 
 @Service
 class MemberService(
-    private val memberRepository: MemberRepository
-
+    private val memberRepository: MemberRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
 
     fun registerMember(memberReqDto: MemberReqDto) {
+        val encodedPassword = passwordEncoder.encode(memberReqDto.password)
 
-        memberRepository.save(memberReqDto.toMemberEntity())
+        val member = memberReqDto.toMemberEntity(encodedPassword)
 
+        memberRepository.save(member)
     }
 
     // member 수정

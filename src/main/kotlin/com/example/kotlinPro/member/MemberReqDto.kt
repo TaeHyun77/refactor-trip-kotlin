@@ -11,7 +11,7 @@ data class MemberReqDto(
     val age: String,
     val selfIntro: String
 ) {
-    fun toMemberEntity(): Member {
+    fun toMemberEntity(password: String): Member {
         return Member(
             username = username,
             password = password,
