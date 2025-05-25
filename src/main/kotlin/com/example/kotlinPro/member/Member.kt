@@ -20,34 +20,34 @@ class Member (
     val id: Long? = null,
 
     @Column
-    var username: String,
+    var username: String = "",
 
     @Column
-    val password: String,
+    val password: String = "",
 
     @Enumerated(EnumType.STRING)
     @Column
     var role: Role,
 
     @Column(nullable = false, unique = true)
-    var name: String,
+    var name: String = "",
 
     @Column(nullable = false, unique = true)
-    var email: String,
+    var email: String = "",
 
     @Column
-    val category: String,
+    val category: String = "",
 
     @Column
-    var gender: String,
+    var gender: String = "",
 
     @Column
-    var age: String,
+    var age: String = "",
 
     @Column
-    var selfIntro: String,
+    var selfIntro: String = "",
 
-): BaseTime() {
+    ): BaseTime() {
 
     fun updateMember(name: String, email: String, gender: String, age: String, selfIntro: String) {
         this.name = name
