@@ -46,19 +46,19 @@ class Post(
 
     var postImage: String? = null,
 
-    val travelStartDate: String?,
+    var travelStartDate: String?,
 
-    val travelEndDate: String?
+    var travelEndDate: String?
 
     ): BaseTime() {
 
-        fun editPost(title: String, content: String, mbti: String, place: String, viewCnt: Int, people: Int, status: Boolean) {
+        fun updatePost(title: String, content: String, mbti: String?, place: String?, postImage: String?, travelStartDate: String?, travelEndDate: String?) {
             this.title = title
             this.content = content
             this.mbti = mbti
             this.place = place
-            this.viewCnt = viewCnt
-            this.people = people
-            this.status = status
+            this.postImage = postImage
+            this.travelStartDate = travelStartDate
+            this.travelEndDate = travelEndDate
         }
     }

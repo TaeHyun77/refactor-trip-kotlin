@@ -2,6 +2,7 @@ package com.example.kotlinPro.post
 
 import com.example.kotlinPro.config.fileUploader
 import com.example.kotlinPro.member.MemberRepository
+import com.example.kotlinPro.member.MemberResDto
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -14,7 +15,7 @@ private val log = KotlinLogging.logger {}
 @Service
 class PostService (
     private val memberRepository: MemberRepository,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
 ){
 
     fun writePost(postReqDto: PostReqDto, file: MultipartFile?) {
@@ -35,32 +36,35 @@ class PostService (
         postRepository.save(post)
     }
 
-    fun editPost(postUpdateDto: PostUpdateDto) {
+    fun updatePost(postId: Long, postUpdateDto: PostUpdateDto, file: MultipartFile?) {
 
-        val post = postRepository.findById(postUpdateDto.id)
+        val post = postRepository.findById(postId)
             .orElseThrow {
-                log.warn { "수정 요청한 게시글을 찾을 수 없습니다. id=${postUpdateDto.id}" }
+                log.warn { "게시글을 찾을 수 없습니다. id=${postId}" }
                 TripException(HttpStatus.NOT_FOUND, ErrorCode.POST_NOT_FOUND)
             }
 
-        post.editPost(
+        // file이 존재하면 앞에꺼, 존재하지 않으면 뒤에꺼
+        val updatedImage = file?.let { fileUploader("postImage", it) } ?: post.postImage
+
+        post.updatePost(
             title = postUpdateDto.title,
             content = postUpdateDto.content,
             mbti = postUpdateDto.mbti,
             place = postUpdateDto.place,
-            viewCnt = postUpdateDto.viewCnt,
-            people = postUpdateDto.people,
-            status = postUpdateDto.status
+            postImage = updatedImage,
+            travelStartDate = postUpdateDto.travelStartDate,
+            travelEndDate = postUpdateDto.travelEndDate
         )
 
         postRepository.save(post)
     }
 
-    fun deletePost(id: Long) {
+    fun removePost(postId: Long) {
 
-        val post = postRepository.findById(id)
+        val post = postRepository.findById(postId)
             .orElseThrow {
-                log.warn { "삭제 요청한 게시글을 찾을 수 없습니다. id=${id}" }
+                log.warn { "게시글을 찾을 수 없습니다. id=${postId}" }
                 TripException(HttpStatus.NOT_FOUND, ErrorCode.POST_NOT_FOUND)
             }
 
@@ -90,5 +94,48 @@ class PostService (
                 travelEndDate = post.travelEndDate
             )
         }
+    }
+
+    fun postInfo(id: Long): PostResDto {
+
+        val post = postRepository.findById(id)
+            .orElseThrow {
+                log.warn { "조회 게시글을 찾을 수 없습니다. id=${id}" }
+                TripException(HttpStatus.NOT_FOUND, ErrorCode.POST_NOT_FOUND)
+            }
+
+        val member = memberRepository.findByName(post.writer)
+            ?: run {
+                log.warn { "사용자 '${post.writer}' 를 찾을 수 없습니다." }
+                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
+            }
+
+        return PostResDto(
+            id = post.id,
+            title = post.title,
+            content = post.content,
+            writer = post.writer,
+            mbti = post.mbti,
+            place = post.place,
+            people = post.people,
+            viewCnt = post.viewCnt,
+            postCategory = post.postCategory,
+            status = post.status,
+            postImage = post.postImage,
+            createdAt = post.createdAt,
+            modifiedAt = post.modifiedAt,
+            travelStartDate = post.travelStartDate,
+            travelEndDate = post.travelEndDate,
+            member = MemberResDto(
+                username = post.member.username,
+                role = post.member.role,
+                name = post.member.name,
+                email = post.member.email,
+                gender = post.member.gender,
+                age = post.member.age,
+                selfIntro = post.member.selfIntro,
+                profileImage = post.member.profileImage
+            )
+        )
     }
 }
