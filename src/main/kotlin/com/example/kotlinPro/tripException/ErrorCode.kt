@@ -17,7 +17,9 @@ enum class ErrorCode (
 
     INVALID_TOKEN("INVALID_TOKEN", "유효하지 않은 토큰입니다."),
 
-    ROLE_CLAIM_MISSING("ROLE_CLAIM_MISSING", "유효하지 않은 권한입니다.")
+    ROLE_CLAIM_MISSING("ROLE_CLAIM_MISSING", "유효하지 않은 권한입니다."),
+
+    FILE_SAVE_FAILED("FILE_SAVE_FAILED", "이미지 파일 저장 실패")
 
 
 }

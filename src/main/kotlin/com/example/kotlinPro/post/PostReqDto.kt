@@ -1,6 +1,7 @@
 package com.example.kotlinPro.post
 
 import com.example.kotlinPro.member.Member
+import java.time.LocalDate
 
 data class PostReqDto (
 
@@ -12,18 +13,23 @@ data class PostReqDto (
 
     val writer: String,
 
-    var mbti: String,
+    var mbti: String?,
 
-    var place: String,
+    var place: String?,
 
-    var viewCnt: Int,
+    var people: Int?,
 
-    var people: Int,
+    var viewCnt: Int?,
 
-    var category: String,
+    var postCategory: String,
 
     var status: Boolean = false,
+
+    val travelStartDate: String,
+
+    val travelEndDate: String
     ){
+
     fun toPostEntity(member: Member): Post{
         return Post(
             title = title,
@@ -31,11 +37,13 @@ data class PostReqDto (
             writer = writer,
             mbti = mbti,
             place = place,
-            viewCnt = viewCnt,
             people = people,
-            category = category,
+            viewCnt = viewCnt,
+            postCategory = postCategory,
             status = status,
-            member = member
+            member = member,
+            travelStartDate = travelStartDate,
+            travelEndDate = travelEndDate
         )
     }
 }

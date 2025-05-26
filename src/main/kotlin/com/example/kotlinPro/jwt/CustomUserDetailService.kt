@@ -1,6 +1,5 @@
 package com.example.kotlinPro.jwt
 
-import com.example.kotlinPro.member.Member
 import com.example.kotlinPro.member.MemberRepository
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
@@ -23,7 +22,7 @@ class CustomUserDetailService(
                 log.info { "$username 사용자를 찾을 수 없습니다." }
                 throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
             }
-        
+
         log.info { "로그인 사용자: $username" }
 
         return CustomUserDetails(member)

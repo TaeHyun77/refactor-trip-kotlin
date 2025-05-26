@@ -51,7 +51,7 @@ class LoginFilter(
         val password = userDetails.password
         val gender = userDetails.getGender()
         val age = userDetails.getAge()
-        val role = authentication.authorities.first().authority
+        val role = authentication.authorities.first().authority // "USER" 이런 식임
 
         val accessToken = jwtUtil.createToken(username, password, name, email, role, gender, age, "access", 30 * 60 * 1000)
         val refresh = jwtUtil.createToken(username, password, name, email, role, gender, age, "refresh", 60 * 60 * 1000)
@@ -77,7 +77,7 @@ class LoginFilter(
         response: HttpServletResponse,
         failed: AuthenticationException
     ) {
-        log.error(failed) { "${"로그인 실패: ${failed.message}"}"}
+        log.error(failed) { "로그인 실패: ${failed.message}" }
         response.status = HttpServletResponse.SC_UNAUTHORIZED
     }
 }
