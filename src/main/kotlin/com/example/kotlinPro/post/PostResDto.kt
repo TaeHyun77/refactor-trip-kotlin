@@ -1,6 +1,7 @@
 package com.example.kotlinPro.post
 
-import java.time.LocalDate
+import com.example.kotlinPro.member.Member
+import com.example.kotlinPro.member.MemberResDto
 import java.time.LocalDateTime
 
 data class PostResDto(
@@ -32,6 +33,8 @@ data class PostResDto(
 
     val travelStartDate: String?,
 
-    val travelEndDate: String?
+    val travelEndDate: String?,
+
+    val member: MemberResDto? = null
 ) {
 }

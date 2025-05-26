@@ -1,5 +1,6 @@
 package com.example.kotlinPro.post
 
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,6 +18,7 @@ class PostController (
     private val postService: PostService
 ){
 
+    // 게시물 작성
     @PostMapping("/write", consumes = ["multipart/form-data"])
     fun writePost(
         @RequestPart("postData") postReqDto: PostReqDto,
@@ -26,22 +28,32 @@ class PostController (
         return ResponseEntity.ok().build()
     }
 
-    @PostMapping("/edit")
-    fun editPost(@RequestBody postUpdateDto: PostUpdateDto) {
+    // 게시물 수정
+    @PostMapping("/{postId}", consumes = ["multipart/form-data"])
+    fun updatePost(@PathVariable postId: Long, @RequestPart("postUpdateData") postUpdateDto: PostUpdateDto,
+        @RequestPart("file") file: MultipartFile?
+    ): ResponseEntity<Any> {
+        postService.updatePost(postId, postUpdateDto, file)
+        return ResponseEntity.ok().build()
+    }
 
-        postService.editPost(postUpdateDto)
+    // 게시물 삭제
+    @DeleteMapping("/remove/{postId}")
+    fun deletePost(@PathVariable("postId") postId: Long) {
+
+        postService.removePost(postId)
 
     }
 
-    @DeleteMapping("/delete/{id}")
-    fun deletePost(@PathVariable("id") id: Long) {
-
-        postService.deletePost(id)
-
-    }
-
+    // 모든 게시물 조회
     @GetMapping("/list")
     fun postList(): List<PostResDto> {
         return postService.postList()
+    }
+
+    // 특정 게시물 조회
+    @GetMapping("/{id}")
+    fun postInfo(@PathVariable("id") id: Long): PostResDto {
+        return postService.postInfo(id)
     }
 }
