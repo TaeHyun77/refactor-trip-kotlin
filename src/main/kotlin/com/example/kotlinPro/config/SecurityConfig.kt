@@ -4,6 +4,7 @@ import com.example.kotlinPro.jwt.JwtFilter
 import com.example.kotlinPro.jwt.JwtUtil
 import com.example.kotlinPro.jwt.LoginFilter
 import com.example.kotlinPro.jwt.CustomLogoutFilter
+import com.example.kotlinPro.member.MemberRepository
 import com.example.kotlinPro.refresh.RefreshRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,7 +29,8 @@ class SecurityConfig(
     // , 커스텀 로그인 필터( LoginFilter, LogoutFilter ) 등을 만들 때는 아래처럼 명시적으로 선언해야 함
     private val authenticationConfiguration: AuthenticationConfiguration,
     private val jwtUtil: JwtUtil,
-    private val refreshRepository: RefreshRepository
+    private val refreshRepository: RefreshRepository,
+    private val memberRepository: MemberRepository
 ) {
 
     @Bean
@@ -51,13 +53,13 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers(
-                        "/", "/member/**", "post"
+                        "/", "/member/**", "/post/**", "/reToken", "/profileImages/**", "/postImages/**"
                     ).permitAll()
                     .requestMatchers("/admin").hasRole("ADMIN")
                     .requestMatchers("/login", "/logout").permitAll()
                     .anyRequest().authenticated()
             }
-            .addFilterBefore(JwtFilter(jwtUtil), LoginFilter::class.java)
+            .addFilterBefore(JwtFilter(jwtUtil, memberRepository), LoginFilter::class.java)
             .addFilterAt(LoginFilter(authenticationManager(), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(CustomLogoutFilter(jwtUtil, refreshRepository), JwtFilter::class.java)
             .sessionManagement {

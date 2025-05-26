@@ -10,7 +10,7 @@ class CustomUserDetails(
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
         return listOf(
-            GrantedAuthority { "ROLE_${member.role.name}" }
+            GrantedAuthority { member.role.name }
         )
     }
 

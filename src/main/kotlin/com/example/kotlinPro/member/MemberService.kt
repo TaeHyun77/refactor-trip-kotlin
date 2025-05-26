@@ -1,12 +1,15 @@
 package com.example.kotlinPro.member
 
+import com.example.kotlinPro.config.fileUploader
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 
 private val log = KotlinLogging.logger {}
 
@@ -16,23 +19,34 @@ class MemberService(
     private val passwordEncoder: PasswordEncoder
 ) {
 
-    fun registerMember(memberReqDto: MemberReqDto) {
+    fun registerMember(memberReqDto: MemberReqDto, file: MultipartFile?) {
         val encodedPassword = passwordEncoder.encode(memberReqDto.password)
 
         val member = memberReqDto.toMemberEntity(encodedPassword)
 
+        if (file != null) {
+            val imageUrl = fileUploader("profileImage", file)
+            member.profileImage = imageUrl
+        }
+
         memberRepository.save(member)
+    }
+
+    fun getProfileImage(username: String): ResponseEntity<ProfileImageDto> {
+
+        val member = searchMember(username)
+
+        val imagePath = member.profileImage  // ex) /profileImages/uuid_image.png
+        log.info { "profileImage: ${member.profileImage}" }
+
+        return ResponseEntity.ok(ProfileImageDto(profileImage = imagePath))
     }
 
     // member 수정
     @Transactional
     fun updateMember(memberUpdateDto: MemberUpdateDto) {
 
-        val member = memberRepository.findByUsername(memberUpdateDto.username)
-            ?: run {
-                log.warn { "회원 정보를 찾을 수 없습니다. (수정 실패) username: ${memberUpdateDto.username}" }
-                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
-            }
+        val member = searchMember(memberUpdateDto.username)
 
         member.updateMember(
             memberUpdateDto.name,
@@ -48,13 +62,18 @@ class MemberService(
     @Transactional
     fun deleteMember(username: String) {
 
-        val deleteMember = memberRepository.findByUsername(username)
+        val member = searchMember(username)
+
+        memberRepository.delete(member)
+    }
+
+    fun searchMember(username: String): Member {
+        val member = memberRepository.findByUsername(username)
             ?: run {
-                log.warn { "회원 정보를 찾을 수 없습니다. (삭제 실패) username: $username"}
+                log.warn { "회원 정보를 찾을 수 없습니다. username: $username"}
                 throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
             }
 
-        memberRepository.delete(deleteMember)
-
+        return member
     }
 }

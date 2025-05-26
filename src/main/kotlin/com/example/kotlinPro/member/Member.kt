@@ -20,32 +20,32 @@ class Member (
     val id: Long? = null,
 
     @Column
-    var username: String = "",
+    var username: String,
 
     @Column
-    val password: String = "",
+    val password: String,
 
     @Enumerated(EnumType.STRING)
     @Column
     var role: Role,
 
     @Column(nullable = false, unique = true)
-    var name: String = "",
+    var name: String,
 
     @Column(nullable = false, unique = true)
-    var email: String = "",
+    var email: String,
 
     @Column
-    val category: String = "",
+    var gender: String,
 
     @Column
-    var gender: String = "",
+    var age: String,
 
     @Column
-    var age: String = "",
+    var selfIntro: String?,
 
     @Column
-    var selfIntro: String = "",
+    var profileImage: String? = null
 
     ): BaseTime() {
 
@@ -56,5 +56,4 @@ class Member (
         this.age = age
         this.selfIntro = selfIntro
     }
-
 }

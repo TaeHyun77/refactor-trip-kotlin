@@ -1,9 +1,9 @@
 package com.example.kotlinPro.jwt
 
-import com.example.kotlinPro.member.Member
-import com.example.kotlinPro.member.Role
+import com.example.kotlinPro.member.MemberRepository
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -12,9 +12,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 
+private val log = KotlinLogging.logger { }
 
 class JwtFilter(
-    private val jwtUtil: JwtUtil
+    private val jwtUtil: JwtUtil,
+    private val memberRepository: MemberRepository
 ): OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -42,9 +44,12 @@ class JwtFilter(
         }
 
         val username: String = jwtUtil.getUsername(accessToken)
-        val role: Role = jwtUtil.getRole(accessToken)
 
-        val member = Member(username = username, role = role)
+        val member = memberRepository.findByUsername(username)
+            ?: run {
+                log.warn { "회원 정보를 찾을 수 없습니다. username: $username" }
+                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
+            }
 
         val customUserDetails = CustomUserDetails(member)
 

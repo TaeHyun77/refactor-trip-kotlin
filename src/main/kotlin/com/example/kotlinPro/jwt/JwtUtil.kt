@@ -63,7 +63,7 @@ class JwtUtil(
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).payload.expiration.before(Date())
     }
 
-    fun createToken(username: String, password: String, name: String, email: String, role: String?, gender: String, age: String, category: String, expired: Long): String {
+    fun createToken(username: String, password: String, name: String, email: String, role: String, gender: String, age: String, category: String, expired: Long): String {
         val now = Date()
         val expiredDate = Date(now.time + expired)
 
