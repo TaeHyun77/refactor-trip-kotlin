@@ -104,12 +104,6 @@ class PostService (
                 TripException(HttpStatus.NOT_FOUND, ErrorCode.POST_NOT_FOUND)
             }
 
-        val member = memberRepository.findByName(post.writer)
-            ?: run {
-                log.warn { "사용자 '${post.writer}' 를 찾을 수 없습니다." }
-                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
-            }
-
         return PostResDto(
             id = post.id,
             title = post.title,

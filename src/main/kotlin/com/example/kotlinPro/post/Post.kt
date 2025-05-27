@@ -1,6 +1,7 @@
 package com.example.kotlinPro.post
 
 import com.example.kotlinPro.BaseTime
+import com.example.kotlinPro.comment.Comment
 import com.example.kotlinPro.member.Member
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -10,6 +11,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import org.springframework.http.RequestEntity.post
 import java.time.LocalDate
 
 @Entity
@@ -40,15 +43,18 @@ class Post(
 
     var status: Boolean = false,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    var member: Member,
-
     var postImage: String? = null,
 
     var travelStartDate: String?,
 
-    var travelEndDate: String?
+    var travelEndDate: String?,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    var member: Member,
+
+    @OneToMany(mappedBy = "post")
+    val commentList: List<Comment> = ArrayList()
 
     ): BaseTime() {
 
