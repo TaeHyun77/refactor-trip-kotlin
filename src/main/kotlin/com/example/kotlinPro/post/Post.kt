@@ -3,6 +3,8 @@ package com.example.kotlinPro.post
 import com.example.kotlinPro.BaseTime
 import com.example.kotlinPro.comment.Comment
 import com.example.kotlinPro.member.Member
+import com.example.kotlinPro.participant.Participant
+import com.example.kotlinPro.participant.ParticipantResDto
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -54,7 +56,10 @@ class Post(
     var member: Member,
 
     @OneToMany(mappedBy = "post")
-    val commentList: List<Comment> = ArrayList()
+    val commentList: List<Comment> = ArrayList(),
+
+    @OneToMany(mappedBy = "post")
+    val participantList: List<Participant> = ArrayList()
 
     ): BaseTime() {
 
