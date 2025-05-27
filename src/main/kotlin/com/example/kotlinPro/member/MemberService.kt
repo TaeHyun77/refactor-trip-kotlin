@@ -31,6 +31,7 @@ class MemberService(
                 ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
 
             val dto = MemberResDto(
+                id = member.id,
                 username = username,
                 role = role,
                 name = member.name,
@@ -40,7 +41,9 @@ class MemberService(
                 selfIntro = member.selfIntro,
                 profileImage = member.profileImage,
                 createdAt = member.createdAt,
-                modifiedAt = member.modifiedAt
+                modifiedAt = member.modifiedAt,
+                followers = member.followers.map { it.follower.username },
+                followings = member.followings.map {it.following.username}
             )
 
             ResponseEntity.ok(dto)

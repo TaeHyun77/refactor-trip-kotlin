@@ -1,6 +1,7 @@
 package com.example.kotlinPro.member
 
 import com.example.kotlinPro.BaseTime
+import com.example.kotlinPro.follow.Follow
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
@@ -9,6 +10,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 
 @EntityListeners(AuditingEntityListener::class)
@@ -45,7 +47,13 @@ class Member (
     var selfIntro: String?,
 
     @Column
-    var profileImage: String? = null
+    var profileImage: String? = null,
+
+    @OneToMany(mappedBy = "following")
+    val followers: MutableList<Follow> = mutableListOf(),
+
+    @OneToMany(mappedBy = "follower")
+    val followings: MutableList<Follow> = mutableListOf(),
 
     ): BaseTime() {
 

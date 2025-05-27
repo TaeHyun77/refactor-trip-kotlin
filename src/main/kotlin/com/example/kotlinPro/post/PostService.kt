@@ -1,5 +1,6 @@
 package com.example.kotlinPro.post
 
+import com.example.kotlinPro.config.CreateCookie
 import com.example.kotlinPro.config.fileUploader
 import com.example.kotlinPro.member.MemberRepository
 import com.example.kotlinPro.member.MemberResDto
@@ -9,6 +10,8 @@ import com.example.kotlinPro.participant.ParticipantResDto
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -90,12 +93,12 @@ class PostService (
                 people = post.people,
                 viewCnt = post.viewCnt,
                 postCategory = post.postCategory,
-                status = post.status,
                 postImage = post.postImage,
                 createdAt = post.createdAt,
                 modifiedAt = post.modifiedAt,
                 travelStartDate = post.travelStartDate,
-                travelEndDate = post.travelEndDate
+                travelEndDate = post.travelEndDate,
+                member = null
             )
         }
     }
@@ -120,13 +123,13 @@ class PostService (
             people = post.people,
             viewCnt = post.viewCnt,
             postCategory = post.postCategory,
-            status = post.status,
             postImage = post.postImage,
             createdAt = post.createdAt,
             modifiedAt = post.modifiedAt,
             travelStartDate = post.travelStartDate,
             travelEndDate = post.travelEndDate,
             member = MemberResDto(
+                id = post.member.id,
                 username = post.member.username,
                 role = post.member.role,
                 name = post.member.name,
@@ -136,11 +139,34 @@ class PostService (
                 selfIntro = post.member.selfIntro,
                 profileImage = post.member.profileImage,
                 createdAt = post.member.createdAt,
-                modifiedAt = post.member.modifiedAt
+                modifiedAt = post.member.modifiedAt,
+                followers = post.member.followers.map { it.follower.username },
+                followings = post.member.followings.map {it.following.username}
             ),
             participantList = participantList.map { participant ->
                 ParticipantResDto(username = participant.username)
             }
         )
+    }
+
+    fun viewCount(id: Long, username: String, request: HttpServletRequest, response: HttpServletResponse) {
+
+        val cookieKey = "$id-post-$username"
+        val cookies = request.cookies ?: emptyArray()
+
+        val alreadyViewed = cookies.any { it.name == cookieKey }
+
+        if (!alreadyViewed) {
+            val post = postRepository.findById(id)
+                .orElseThrow {
+                    throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.POST_NOT_FOUND)
+                }
+
+            post.viewCnt = (post.viewCnt ?: 0) + 1
+            postRepository.save(post)
+
+            // 쿠키 생성 후 응답에 추가
+            response.addCookie(CreateCookie.createCookie(cookieKey, "viewed"))
+        }
     }
 }

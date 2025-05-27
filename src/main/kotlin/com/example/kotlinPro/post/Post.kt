@@ -43,8 +43,6 @@ class Post(
     // 동행글 or 자유글
     val postCategory: String,
 
-    var status: Boolean = false,
-
     var postImage: String? = null,
 
     var travelStartDate: String?,
