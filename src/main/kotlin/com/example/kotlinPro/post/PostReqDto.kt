@@ -23,8 +23,6 @@ data class PostReqDto (
 
     var postCategory: String,
 
-    var status: Boolean = false,
-
     val travelStartDate: String?,
 
     val travelEndDate: String?
@@ -38,9 +36,8 @@ data class PostReqDto (
             mbti = mbti,
             place = place,
             people = people,
-            viewCnt = viewCnt,
+            viewCnt = 0,
             postCategory = postCategory,
-            status = status,
             member = member,
             travelStartDate = travelStartDate,
             travelEndDate = travelEndDate

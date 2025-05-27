@@ -1,5 +1,7 @@
 package com.example.kotlinPro.post
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -56,4 +58,12 @@ class PostController (
     fun postInfo(@PathVariable("id") id: Long): PostResDto {
         return postService.postInfo(id)
     }
+
+    // 조회수 업데이트 로직
+    @PostMapping("/view/{id}/{username}")
+    fun viewCount(@PathVariable(name = "id") id: Long, @PathVariable(name = "username") username: String, request: HttpServletRequest, response: HttpServletResponse) {
+
+        return postService.viewCount(id, username, request, response)
+    }
+
 }

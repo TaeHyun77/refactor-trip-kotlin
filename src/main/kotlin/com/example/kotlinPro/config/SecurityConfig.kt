@@ -53,7 +53,7 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers(
-                        "/", "/member/**", "/post/**", "/comment/**", "/reToken", "/profileImages/**", "/postImages/**", "/participant/**"
+                        "/", "/member/**", "/post/**", "/comment/**", "/follow/**", "/reToken", "/profileImages/**", "/postImages/**", "/participant/**"
                     ).permitAll()
                     .requestMatchers("/admin").hasRole("ADMIN")
                     .requestMatchers("/login", "/logout").permitAll()

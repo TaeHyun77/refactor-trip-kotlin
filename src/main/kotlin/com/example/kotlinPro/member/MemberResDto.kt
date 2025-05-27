@@ -1,8 +1,10 @@
 package com.example.kotlinPro.member
 
+import com.example.kotlinPro.follow.Follow
 import java.time.LocalDateTime
 
 data class MemberResDto (
+    val id: Long?,
     val username: String,
     val role: Role,
     val name: String,
@@ -12,6 +14,8 @@ data class MemberResDto (
     val selfIntro: String?,
     val profileImage: String?,
     val createdAt: LocalDateTime?,
-    val modifiedAt: LocalDateTime?
+    val modifiedAt: LocalDateTime?,
+    val followers: List<String>?,
+    val followings: List<String>?
 )
 {}

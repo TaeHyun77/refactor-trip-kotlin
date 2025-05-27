@@ -25,8 +25,6 @@ data class PostResDto(
 
     var postCategory: String,
 
-    var status: Boolean = false,
-
     var postImage: String?,
 
     val createdAt: LocalDateTime?,
@@ -37,7 +35,7 @@ data class PostResDto(
 
     val travelEndDate: String?,
 
-    val member: MemberResDto? = null,
+    val member: MemberResDto?,
 
     val participantList: List<ParticipantResDto>? = null
 ) {
