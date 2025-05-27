@@ -25,9 +25,9 @@ data class PostReqDto (
 
     var status: Boolean = false,
 
-    val travelStartDate: String,
+    val travelStartDate: String?,
 
-    val travelEndDate: String
+    val travelEndDate: String?
     ){
 
     fun toPostEntity(member: Member): Post{

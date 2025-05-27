@@ -23,10 +23,9 @@ private val log = KotlinLogging.logger {}
 @RestController
 class MemberController(
     private val memberService: MemberService,
-    private val jwtUtil: JwtUtil,
-    private val memberRepository: MemberRepository
 ) {
 
+    // 사용자 정보 조회
     @GetMapping("/info")
     fun memberInfo(request: HttpServletRequest): ResponseEntity<MemberResDto> {
 
@@ -39,30 +38,10 @@ class MemberController(
 
         val token = authorization.substring(7)
 
-        return try {
-            val username = jwtUtil.getUsername(token)
-            val role = jwtUtil.getRole(token)
-
-            val member = memberRepository.findByUsername(username)
-                ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
-
-            val dto = MemberResDto(
-                username = username,
-                role = role,
-                name = member.name,
-                email = member.email,
-                gender = member.gender,
-                age = member.age,
-                selfIntro = member.selfIntro,
-                profileImage = member.profileImage
-            )
-
-            ResponseEntity.ok(dto)
-        } catch (e: Exception) {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-        }
+        return memberService.memberInfo(token)
     }
 
+    // 사용자 등록
     @PostMapping("/register", consumes = ["multipart/form-data"])
     fun registerMember(
         @RequestPart("user") memberReqDto: MemberReqDto,
@@ -73,12 +52,14 @@ class MemberController(
         return ResponseEntity.ok().build()
     }
 
+    // 사용자 수정
     @PostMapping("/update")
     fun updateMember(@RequestBody memberUpdateDto: MemberUpdateDto) {
 
         memberService.updateMember(memberUpdateDto)
     }
 
+    // 사용자 삭제
     @DeleteMapping("/delete/{username}")
     fun deleteMember(@PathVariable("username") username: String) {
 
@@ -86,6 +67,7 @@ class MemberController(
 
     }
 
+    // 사용자 프로필 이미지 반환
     @GetMapping("/profileImage/{username}")
     fun profileImage(@PathVariable("username") username: String): ResponseEntity<ProfileImageDto> {
 

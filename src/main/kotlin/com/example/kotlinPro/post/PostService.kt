@@ -3,6 +3,9 @@ package com.example.kotlinPro.post
 import com.example.kotlinPro.config.fileUploader
 import com.example.kotlinPro.member.MemberRepository
 import com.example.kotlinPro.member.MemberResDto
+import com.example.kotlinPro.participant.Participant
+import com.example.kotlinPro.participant.ParticipantRepository
+import com.example.kotlinPro.participant.ParticipantResDto
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -16,6 +19,7 @@ private val log = KotlinLogging.logger {}
 class PostService (
     private val memberRepository: MemberRepository,
     private val postRepository: PostRepository,
+    private val participantRepository: ParticipantRepository
 ){
 
     fun writePost(postReqDto: PostReqDto, file: MultipartFile?) {
@@ -104,6 +108,8 @@ class PostService (
                 TripException(HttpStatus.NOT_FOUND, ErrorCode.POST_NOT_FOUND)
             }
 
+        val participantList: List<Participant> = participantRepository.findByPostId(id)
+
         return PostResDto(
             id = post.id,
             title = post.title,
@@ -128,8 +134,13 @@ class PostService (
                 gender = post.member.gender,
                 age = post.member.age,
                 selfIntro = post.member.selfIntro,
-                profileImage = post.member.profileImage
-            )
+                profileImage = post.member.profileImage,
+                createdAt = post.member.createdAt,
+                modifiedAt = post.member.modifiedAt
+            ),
+            participantList = participantList.map { participant ->
+                ParticipantResDto(username = participant.username)
+            }
         )
     }
 }

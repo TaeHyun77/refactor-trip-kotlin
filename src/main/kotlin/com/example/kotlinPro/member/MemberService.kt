@@ -1,9 +1,11 @@
 package com.example.kotlinPro.member
 
 import com.example.kotlinPro.config.fileUploader
+import com.example.kotlinPro.jwt.JwtUtil
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,8 +18,36 @@ private val log = KotlinLogging.logger {}
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
+    private val jwtUtil: JwtUtil,
     private val passwordEncoder: PasswordEncoder
 ) {
+
+    fun memberInfo(token: String): ResponseEntity<MemberResDto> {
+        return try {
+            val username = jwtUtil.getUsername(token)
+            val role = jwtUtil.getRole(token)
+
+            val member = memberRepository.findByUsername(username)
+                ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
+
+            val dto = MemberResDto(
+                username = username,
+                role = role,
+                name = member.name,
+                email = member.email,
+                gender = member.gender,
+                age = member.age,
+                selfIntro = member.selfIntro,
+                profileImage = member.profileImage,
+                createdAt = member.createdAt,
+                modifiedAt = member.modifiedAt
+            )
+
+            ResponseEntity.ok(dto)
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+    }
 
     fun registerMember(memberReqDto: MemberReqDto, file: MultipartFile?) {
         val encodedPassword = passwordEncoder.encode(memberReqDto.password)
