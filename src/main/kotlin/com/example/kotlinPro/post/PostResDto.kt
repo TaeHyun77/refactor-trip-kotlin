@@ -1,6 +1,5 @@
 package com.example.kotlinPro.post
 
-import com.example.kotlinPro.member.Member
 import com.example.kotlinPro.member.MemberResDto
 import com.example.kotlinPro.participant.Participant
 import com.example.kotlinPro.participant.ParticipantResDto
@@ -37,6 +36,6 @@ data class PostResDto(
 
     val member: MemberResDto?,
 
-    val participantList: List<ParticipantResDto>? = null
+    val participantList: List<ParticipantResDto>
 ) {
 }

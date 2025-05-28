@@ -2,6 +2,8 @@ package com.example.kotlinPro.member
 
 import com.example.kotlinPro.BaseTime
 import com.example.kotlinPro.follow.Follow
+import com.example.kotlinPro.message.Message
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
@@ -49,11 +51,14 @@ class Member (
     @Column
     var profileImage: String? = null,
 
-    @OneToMany(mappedBy = "following")
+    @OneToMany(mappedBy = "following", cascade = [CascadeType.ALL], orphanRemoval = true)
     val followers: MutableList<Follow> = mutableListOf(),
 
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "follower", cascade = [CascadeType.ALL], orphanRemoval = true)
     val followings: MutableList<Follow> = mutableListOf(),
+
+    @OneToMany(mappedBy = "member")
+    val messageList: List<Message> = ArrayList()
 
     ): BaseTime() {
 

@@ -1,6 +1,7 @@
 package com.example.kotlinPro.member
 
-import com.example.kotlinPro.follow.Follow
+import com.example.kotlinPro.message.Message
+import com.example.kotlinPro.message.MessageResDto
 import java.time.LocalDateTime
 
 data class MemberResDto (
@@ -16,6 +17,7 @@ data class MemberResDto (
     val createdAt: LocalDateTime?,
     val modifiedAt: LocalDateTime?,
     val followers: List<String>?,
-    val followings: List<String>?
+    val followings: List<String>?,
+    val messageList: List<MessageResDto>?
 )
 {}

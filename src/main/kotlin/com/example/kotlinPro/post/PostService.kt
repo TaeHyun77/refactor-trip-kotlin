@@ -98,7 +98,25 @@ class PostService (
                 modifiedAt = post.modifiedAt,
                 travelStartDate = post.travelStartDate,
                 travelEndDate = post.travelEndDate,
-                member = null
+                participantList = post.participantList.map { participant ->
+                    ParticipantResDto(username = participant.username)
+                },
+                member = MemberResDto(
+                    id = post.member.id,
+                    username = post.member.username,
+                    role = post.member.role,
+                    name = post.member.name,
+                    email = post.member.email,
+                    gender = post.member.gender,
+                    age = post.member.age,
+                    selfIntro = post.member.selfIntro,
+                    profileImage = post.member.profileImage,
+                    createdAt = post.member.createdAt,
+                    modifiedAt = post.member.modifiedAt,
+                    followers = post.member.followers.map { it.follower.username },
+                    followings = post.member.followings.map {it.following.username},
+                    messageList = null
+                )
             )
         }
     }
@@ -128,6 +146,9 @@ class PostService (
             modifiedAt = post.modifiedAt,
             travelStartDate = post.travelStartDate,
             travelEndDate = post.travelEndDate,
+            participantList = participantList.map { participant ->
+                ParticipantResDto(username = participant.username)
+            },
             member = MemberResDto(
                 id = post.member.id,
                 username = post.member.username,
@@ -141,11 +162,9 @@ class PostService (
                 createdAt = post.member.createdAt,
                 modifiedAt = post.member.modifiedAt,
                 followers = post.member.followers.map { it.follower.username },
-                followings = post.member.followings.map {it.following.username}
-            ),
-            participantList = participantList.map { participant ->
-                ParticipantResDto(username = participant.username)
-            }
+                followings = post.member.followings.map {it.following.username},
+                messageList = null
+            )
         )
     }
 
