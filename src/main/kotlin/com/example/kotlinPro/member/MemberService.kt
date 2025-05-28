@@ -2,6 +2,7 @@ package com.example.kotlinPro.member
 
 import com.example.kotlinPro.config.fileUploader
 import com.example.kotlinPro.jwt.JwtUtil
+import com.example.kotlinPro.message.MessageResDto
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -43,7 +44,17 @@ class MemberService(
                 createdAt = member.createdAt,
                 modifiedAt = member.modifiedAt,
                 followers = member.followers.map { it.follower.username },
-                followings = member.followings.map {it.following.username}
+                followings = member.followings.map {it.following.username},
+                messageList = member.messageList.map{message ->
+                    MessageResDto(
+                        receiver = message.receiver,
+                        sender = message.sender,
+                        title = message.title,
+                        content = message.content,
+                        createdAt = message.createdAt,
+                        modifiedAt = message.modifiedAt
+                    )
+                }
             )
 
             ResponseEntity.ok(dto)
@@ -92,6 +103,7 @@ class MemberService(
         memberRepository.save(member)
     }
 
+    // member 삭제
     @Transactional
     fun deleteMember(username: String) {
 
@@ -100,12 +112,9 @@ class MemberService(
         memberRepository.delete(member)
     }
 
+    // member 조회 메서드
     fun searchMember(username: String): Member {
         val member = memberRepository.findByUsername(username)
-            ?: run {
-                log.warn { "회원 정보를 찾을 수 없습니다. username: $username"}
-                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
-            }
 
         return member
     }

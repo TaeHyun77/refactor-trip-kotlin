@@ -5,6 +5,7 @@ import com.example.kotlinPro.comment.Comment
 import com.example.kotlinPro.member.Member
 import com.example.kotlinPro.participant.Participant
 import com.example.kotlinPro.participant.ParticipantResDto
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -53,10 +54,10 @@ class Post(
     @JoinColumn(name = "member_id")
     var member: Member,
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
     val commentList: List<Comment> = ArrayList(),
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
     val participantList: List<Participant> = ArrayList()
 
     ): BaseTime() {
