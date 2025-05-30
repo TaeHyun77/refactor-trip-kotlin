@@ -3,6 +3,7 @@ package com.example.kotlinPro.participant
 import com.example.kotlinPro.BaseTime
 import com.example.kotlinPro.member.Member
 import com.example.kotlinPro.post.Post
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
