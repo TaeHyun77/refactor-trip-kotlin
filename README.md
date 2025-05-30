@@ -21,6 +21,6 @@ Java 기반 여행 동행 프로젝트를 kotlin으로 리팩터링하는 프로
     <td><img src="https://github.com/user-attachments/assets/03980d16-bbee-42e0-a6a4-8d8c2e5f0da2" width="600"/></td> // 동행글
   </tr>
   <tr>
-    <tdcolspan="2" align="center"><img src="https://github.com/user-attachments/assets/62706306-aaf5-45c3-bbdf-d8906fbe958c" width="600"/></td> // 작성폼
+    <td colspan="2" align="center"><img src="https://github.com/user-attachments/assets/62706306-aaf5-45c3-bbdf-d8906fbe958c" width="600"/></td> // 작성폼
   </tr>
 </table>
