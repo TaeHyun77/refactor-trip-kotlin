@@ -12,12 +12,12 @@ data class MemberResDto (
     val email: String,
     val gender: String,
     val age: String,
-    val selfIntro: String?,
-    val profileImage: String?,
-    val createdAt: LocalDateTime?,
-    val modifiedAt: LocalDateTime?,
-    val followers: List<String>?,
-    val followings: List<String>?,
-    val messageList: List<MessageResDto>?
+    val selfIntro: String? = null,
+    val profileImage: String? = null,
+    val createdAt: LocalDateTime? = null,
+    val modifiedAt: LocalDateTime? = null,
+    val followers: List<String>? = null,
+    val followings: List<String>? = null,
+    val messageList: List<MessageResDto>? = null
 )
 {}

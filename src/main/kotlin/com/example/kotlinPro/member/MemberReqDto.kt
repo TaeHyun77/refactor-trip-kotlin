@@ -3,14 +3,14 @@ package com.example.kotlinPro.member
 data class MemberReqDto(
     val username: String,
     val password: String,
-    val role: Role = Role.USER,
+    val role: Role?,
     val name: String,
     val email: String,
     val gender: String,
     val age: String,
     val selfIntro: String? = null
 ) {
-    fun toMemberEntity(password: String): Member {
+    fun toMemberEntity(password: String, role: Role): Member {
         return Member(
             username = username,
             password = password,

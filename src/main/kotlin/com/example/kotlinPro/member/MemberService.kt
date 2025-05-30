@@ -6,12 +6,11 @@ import com.example.kotlinPro.message.MessageResDto
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 private val log = KotlinLogging.logger {}
@@ -28,7 +27,9 @@ class MemberService(
     fun registerMember(memberReqDto: MemberReqDto, file: MultipartFile?) {
         val encodedPassword = passwordEncoder.encode(memberReqDto.password)
 
-        val member = memberReqDto.toMemberEntity(encodedPassword)
+        val role: Role = if (memberReqDto.username == "admin0515") Role.ADMIN else Role.USER
+
+        val member = memberReqDto.toMemberEntity(encodedPassword, role)
 
         if (file != null) {
             val imageUrl = fileUploader("profileImage", file)
@@ -65,14 +66,28 @@ class MemberService(
         memberRepository.delete(member)
     }
 
+    fun memberList(): List<MemberResDto> {
+
+        return memberRepository.findAll().map {member ->
+            MemberResDto (
+                id = member.id,
+                username = member.username,
+                role = member.role,
+                name = member.name,
+                email = member.email,
+                gender = member.gender,
+                age = member.age
+            )
+        }
+    }
+
     // 로그인 된 사용자 정보 조회
     fun memberInfo(token: String): ResponseEntity<MemberResDto> {
         return try {
             val username = jwtUtil.getUsername(token)
             val role = jwtUtil.getRole(token)
 
-            val member = memberRepository.findByUsername(username)
-                ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
+            val member = searchMember(username)
 
             val dto = MemberResDto(
                 id = member.id,
