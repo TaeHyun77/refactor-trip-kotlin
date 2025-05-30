@@ -3,6 +3,7 @@ package com.example.kotlinPro.follow
 import com.example.kotlinPro.member.MemberRepository
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
+import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
@@ -12,26 +13,28 @@ class FollowService(
     private val followRepository: FollowRepository
 ) {
 
+    // 팔로우 요청
+    @Transactional
     fun follow(selfUsername: String, otherUsername: String) {
 
         val self = memberRepository.findByUsername(selfUsername)
-            ?:run {
-                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
-            }
+            ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
+
 
         val other = memberRepository.findByUsername(otherUsername)
-            ?:run {
-                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
-            }
+            ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
 
         val follow = Follow(follower = self, following = other)
 
         followRepository.save(follow)
     }
 
+    // 팔로우 취소
+    @Transactional
     fun deleteFollow(selfId: Long, otherId: Long) {
 
-        val follow: Follow = followRepository.findByFollowerIdAndFollowingId(selfId, otherId)
+        val follow = followRepository.findByFollowerIdAndFollowingId(selfId, otherId)
+            ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.FOLLOW_NOT_FOUND)
 
         followRepository.delete(follow)
     }

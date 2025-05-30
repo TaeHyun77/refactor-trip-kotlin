@@ -25,22 +25,6 @@ class MemberController(
     private val memberService: MemberService,
 ) {
 
-    // 사용자 정보 조회
-    @GetMapping("/info")
-    fun memberInfo(request: HttpServletRequest): ResponseEntity<MemberResDto> {
-
-        val authorization = request.getHeader("Authorization")
-            ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-
-        if (!authorization.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-        }
-
-        val token = authorization.substring(7)
-
-        return memberService.memberInfo(token)
-    }
-
     // 사용자 등록
     @PostMapping("/register", consumes = ["multipart/form-data"])
     fun registerMember(
@@ -49,6 +33,7 @@ class MemberController(
     ): ResponseEntity<Any> {
 
         memberService.registerMember(memberReqDto, file)
+
         return ResponseEntity.ok().build()
     }
 
@@ -65,6 +50,22 @@ class MemberController(
 
         memberService.deleteMember(username)
 
+    }
+
+    // 사용자 정보 조회
+    @GetMapping("/info")
+    fun memberInfo(request: HttpServletRequest): ResponseEntity<MemberResDto> {
+
+        val authorization = request.getHeader("Authorization")
+            ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+
+        if (!authorization.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+
+        val token = authorization.substring(7)
+
+        return memberService.memberInfo(token)
     }
 
     // 사용자 프로필 이미지 반환

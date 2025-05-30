@@ -24,8 +24,6 @@ fun fileUploader(key: String, file: MultipartFile?): String {
         file?.transferTo(saveFile)
     } catch (e: TripException) {
         throw TripException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.FILE_SAVE_FAILED)
-    } catch (e: IllegalStateException) {
-        throw TripException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.FILE_SAVE_FAILED)
     }
 
     return "$urlPrefix/$fileName"

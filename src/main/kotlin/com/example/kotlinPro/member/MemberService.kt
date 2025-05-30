@@ -23,6 +23,49 @@ class MemberService(
     private val passwordEncoder: PasswordEncoder
 ) {
 
+    // 사용자 등록 ( 회원가입 )
+    @Transactional
+    fun registerMember(memberReqDto: MemberReqDto, file: MultipartFile?) {
+        val encodedPassword = passwordEncoder.encode(memberReqDto.password)
+
+        val member = memberReqDto.toMemberEntity(encodedPassword)
+
+        if (file != null) {
+            val imageUrl = fileUploader("profileImage", file)
+
+            member.profileImage = imageUrl
+        }
+
+        memberRepository.save(member)
+    }
+
+    // 사용자 수정
+    @Transactional
+    fun updateMember(memberUpdateDto: MemberUpdateDto) {
+
+        val member = searchMember(memberUpdateDto.username)
+
+        member.updateMember(
+            memberUpdateDto.name,
+            memberUpdateDto.email,
+            memberUpdateDto.gender,
+            memberUpdateDto.age,
+            memberUpdateDto.selfIntro
+        )
+
+        memberRepository.save(member)
+    }
+
+    // 사용자 삭제
+    @Transactional
+    fun deleteMember(username: String) {
+
+        val member = searchMember(username)
+
+        memberRepository.delete(member)
+    }
+
+    // 로그인 된 사용자 정보 조회
     fun memberInfo(token: String): ResponseEntity<MemberResDto> {
         return try {
             val username = jwtUtil.getUsername(token)
@@ -63,58 +106,21 @@ class MemberService(
         }
     }
 
-    fun registerMember(memberReqDto: MemberReqDto, file: MultipartFile?) {
-        val encodedPassword = passwordEncoder.encode(memberReqDto.password)
-
-        val member = memberReqDto.toMemberEntity(encodedPassword)
-
-        if (file != null) {
-            val imageUrl = fileUploader("profileImage", file)
-            member.profileImage = imageUrl
-        }
-
-        memberRepository.save(member)
-    }
-
+    // 사용자 프로필 이미지 조회
     fun getProfileImage(username: String): ResponseEntity<ProfileImageDto> {
 
         val member = searchMember(username)
 
         val imagePath = member.profileImage  // ex) /profileImages/uuid_image.png
-        log.info { "profileImage: ${member.profileImage}" }
 
         return ResponseEntity.ok(ProfileImageDto(profileImage = imagePath))
     }
 
-    // member 수정
-    @Transactional
-    fun updateMember(memberUpdateDto: MemberUpdateDto) {
-
-        val member = searchMember(memberUpdateDto.username)
-
-        member.updateMember(
-            memberUpdateDto.name,
-            memberUpdateDto.email,
-            memberUpdateDto.gender,
-            memberUpdateDto.age,
-            memberUpdateDto.selfIntro
-        )
-
-        memberRepository.save(member)
-    }
-
-    // member 삭제
-    @Transactional
-    fun deleteMember(username: String) {
-
-        val member = searchMember(username)
-
-        memberRepository.delete(member)
-    }
-
     // member 조회 메서드
     fun searchMember(username: String): Member {
+
         val member = memberRepository.findByUsername(username)
+            ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.MEMBER_NOT_FOUND)
 
         return member
     }

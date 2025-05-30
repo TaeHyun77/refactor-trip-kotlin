@@ -12,6 +12,7 @@ import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -25,6 +26,8 @@ class PostService (
     private val participantRepository: ParticipantRepository
 ){
 
+    // 게시글 작성
+    @Transactional
     fun writePost(postReqDto: PostReqDto, file: MultipartFile?) {
 
         val member = memberRepository.findByName(postReqDto.writer)
@@ -43,11 +46,13 @@ class PostService (
         postRepository.save(post)
     }
 
+    // 게시글 수정
+    @Transactional
     fun updatePost(postId: Long, postUpdateDto: PostUpdateDto, file: MultipartFile?) {
 
         val post = postRepository.findById(postId)
             .orElseThrow {
-                log.warn { "게시글을 찾을 수 없습니다. id=${postId}" }
+                log.warn { "${postId}번 게시글을 찾을 수 없습니다" }
                 TripException(HttpStatus.NOT_FOUND, ErrorCode.POST_NOT_FOUND)
             }
 
@@ -67,16 +72,17 @@ class PostService (
         postRepository.save(post)
     }
 
+    @Transactional
     fun removePost(postId: Long) {
 
         val post = postRepository.findById(postId)
             .orElseThrow {
-                log.warn { "게시글을 찾을 수 없습니다. id=${postId}" }
+                log.warn { "${postId}번 게시글을 찾을 수 없습니다" }
                 TripException(HttpStatus.NOT_FOUND, ErrorCode.POST_NOT_FOUND)
             }
 
         postRepository.delete(post)
-        log.info { "게시글 삭제 완료. id=${post.id}, title='${post.title}'" }
+        log.info { "${post.id}번 게시글 삭제 완료, ( 게시글 제목 : '${post.title}' )" }
     }
 
     fun postList(): List<PostResDto> {
@@ -125,11 +131,12 @@ class PostService (
 
         val post = postRepository.findById(id)
             .orElseThrow {
-                log.warn { "조회 게시글을 찾을 수 없습니다. id=${id}" }
+                log.warn { "${id}번 게시글을 찾을 수 없습니다" }
                 TripException(HttpStatus.NOT_FOUND, ErrorCode.POST_NOT_FOUND)
             }
 
         val participantList: List<Participant> = participantRepository.findByPostId(id)
+            ?: throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.PARTICIPANT_NOT_FOUND)
 
         return PostResDto(
             id = post.id,
@@ -168,6 +175,7 @@ class PostService (
         )
     }
 
+    @Transactional
     fun viewCount(id: Long, username: String, request: HttpServletRequest, response: HttpServletResponse) {
 
         val cookieKey = "$id-post-$username"
@@ -184,7 +192,6 @@ class PostService (
             post.viewCnt = (post.viewCnt ?: 0) + 1
             postRepository.save(post)
 
-            // 쿠키 생성 후 응답에 추가
             response.addCookie(CreateCookie.createCookie(cookieKey, "viewed"))
         }
     }
