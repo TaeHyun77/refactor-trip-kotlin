@@ -1,9 +1,17 @@
 # refactor-project
 
----
-
 Java 기반 여행 동행 프로젝트를 Kotlin으로 리팩터링하는 프로젝트입니다.<br><br><br>
 
+#### ERD
+
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/c367dcfb-2363-4e39-aa55-f1cf5ec49b9d" width="600"/></td>
+  </tr>
+</table>
+
+---
+<br><br>
 
 #### 🏠 홈 화면 & 마이페이지
 
