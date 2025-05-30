@@ -25,7 +25,7 @@ class MemberController(
     private val memberService: MemberService,
 ) {
 
-    // 사용자 등록
+    // 사용자 등록 ( 회원가입 )
     @PostMapping("/register", consumes = ["multipart/form-data"])
     fun registerMember(
         @RequestPart("user") memberReqDto: MemberReqDto,
@@ -50,6 +50,13 @@ class MemberController(
 
         memberService.deleteMember(username)
 
+    }
+
+    // 사용자 리스트 조회
+    @GetMapping("/list")
+    fun memberList(): List<MemberResDto> {
+
+        return memberService.memberList();
     }
 
     // 사용자 정보 조회

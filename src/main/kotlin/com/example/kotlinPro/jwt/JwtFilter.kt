@@ -25,7 +25,8 @@ class JwtFilter(
         filterChain: FilterChain
     ) {
 
-        val accessToken = request.getHeader("access") ?: run {
+        val accessToken = request.getHeader("access")
+            ?: run {
             filterChain.doFilter(request, response)
             return
         }
