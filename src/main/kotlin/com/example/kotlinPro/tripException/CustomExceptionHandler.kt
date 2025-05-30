@@ -10,5 +10,4 @@ class CustomExceptionHandler {
     @ExceptionHandler(TripException::class)
     fun handleCustom400Exception(ex: TripException): ResponseEntity<ErrorDto> =
         ErrorDto.toResponseEntity(ex)
-
 }

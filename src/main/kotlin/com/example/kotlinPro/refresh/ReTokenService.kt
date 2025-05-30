@@ -5,6 +5,7 @@ import com.example.kotlinPro.jwt.JwtUtil
 import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -15,6 +16,7 @@ class ReTokenService(
     private val refreshRepository: RefreshRepository
 ) {
 
+    @Transactional
     fun reToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Any> {
         val cookies = request.cookies
         val refresh = cookies?.firstOrNull { it.name == "refresh" }?.value
@@ -80,6 +82,7 @@ class ReTokenService(
         return ResponseEntity.ok().build()
     }
 
+    @Transactional
     fun createRefresh(username: String, refresh: String, expired: Long) {
         val refresh = Refresh(username = username, refresh = refresh, expiration = expired)
 

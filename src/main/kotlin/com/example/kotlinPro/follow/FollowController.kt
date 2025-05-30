@@ -25,5 +25,4 @@ class FollowController(
 
         return followService.deleteFollow(selfId, otherId)
     }
-
 }

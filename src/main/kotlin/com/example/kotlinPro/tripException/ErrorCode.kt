@@ -13,6 +13,10 @@ enum class ErrorCode (
 
     COMMENT_NOT_FOUND("COMMENT_NOT_FOUND", "댓글을 찾을 수 없습니다."),
 
+    FOLLOW_NOT_FOUND("FOLLOW_NOT_FOUND", "팔로우 목록을 찾을 수 없습니다."),
+
+    PARTICIPANT_NOT_FOUND("PARTICIPANT_NOT_FOUND", "게시글의 해당 참여자를 찾을 수 없습니다."),
+
     ACCESSTOKEN_ISEXPIRED("ACCESSTOKEN_ISEXPIRED", "토큰이 만료되었습니다."),
 
     IS_NOT_ACCESSTOKEN("IS_NOT_ACCESSTOKEN", "access 토큰이 아닙니다."),
@@ -21,7 +25,7 @@ enum class ErrorCode (
 
     ROLE_CLAIM_MISSING("ROLE_CLAIM_MISSING", "유효하지 않은 권한입니다."),
 
-    FILE_SAVE_FAILED("FILE_SAVE_FAILED", "이미지 파일 저장 실패")
+    FILE_SAVE_FAILED("FILE_SAVE_FAILED", "이미지 파일 저장 실패.")
 
 
 }

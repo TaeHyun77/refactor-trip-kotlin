@@ -13,7 +13,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class WebConfig : WebMvcConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/profileImages/**", "/postImages/**")
-            .addResourceLocations("file:${System.getProperty("user.home")}/profile-images/", "file:${System.getProperty("user.home")}/post-images/")
+            .addResourceLocations(
+                "file:${System.getProperty("user.home")}/profile-images/"
+                , "file:${System.getProperty("user.home")}/post-images/"
+            )
     }
 }
 

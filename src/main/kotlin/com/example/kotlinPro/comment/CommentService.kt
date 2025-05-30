@@ -3,6 +3,7 @@ package com.example.kotlinPro.comment
 import com.example.kotlinPro.post.PostRepository
 import com.example.kotlinPro.tripException.ErrorCode
 import com.example.kotlinPro.tripException.TripException
+import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
@@ -13,10 +14,13 @@ class CommentService(
 ) {
 
     // 댓글 작성
+    @Transactional
     fun writeComment(postId: Long, commentReqDto: CommentReqDto) {
-        val post = postRepository.findById(postId).orElseThrow {
-            TripException(HttpStatus.BAD_REQUEST, ErrorCode.POST_NOT_FOUND)
-        }
+
+        val post = postRepository.findById(postId)
+            .orElseThrow {
+                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.POST_NOT_FOUND)
+            }
 
         val comment = commentReqDto.toComment(post)
 
@@ -24,11 +28,12 @@ class CommentService(
     }
 
     // 댓글 수정
+    @Transactional
     fun updateComment(commentId: Long, commentReqDto: CommentReqDto) {
 
-        var comment = commentRepository.findById(commentId)
+        val comment = commentRepository.findById(commentId)
             .orElseThrow {
-                TripException(HttpStatus.BAD_REQUEST, ErrorCode.COMMENT_NOT_FOUND)
+                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.COMMENT_NOT_FOUND)
             }
 
         comment.updateComment(commentReqDto.content)
@@ -37,11 +42,12 @@ class CommentService(
     }
 
     // 댓글 삭제
+    @Transactional
     fun deleteComment(commentId: Long) {
 
         val comment = commentRepository.findById(commentId)
             .orElseThrow {
-                TripException(HttpStatus.BAD_REQUEST, ErrorCode.COMMENT_NOT_FOUND)
+                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.COMMENT_NOT_FOUND)
             }
 
         commentRepository.delete(comment)
@@ -52,7 +58,7 @@ class CommentService(
 
         val post = postRepository.findById(postId)
             .orElseThrow {
-                TripException(HttpStatus.BAD_REQUEST, ErrorCode.POST_NOT_FOUND)
+                throw TripException(HttpStatus.BAD_REQUEST, ErrorCode.POST_NOT_FOUND)
             }
 
         return post.commentList.map {comment ->
