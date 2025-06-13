@@ -1,8 +1,5 @@
 package com.example.kotlinPro.member
 
-import com.example.kotlinPro.jwt.JwtUtil
-import com.example.kotlinPro.tripException.ErrorCode
-import com.example.kotlinPro.tripException.TripException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
@@ -24,6 +21,12 @@ private val log = KotlinLogging.logger {}
 class MemberController(
     private val memberService: MemberService,
 ) {
+
+    // 사용자 아이디 검증 로직 테스트
+    @PostMapping("/check/username")
+    fun checkUsername(@RequestBody request: CheckInfoUsername) {
+        println("유효한 아이디: ${request.username}")
+    }
 
     // 사용자 등록 ( 회원가입 )
     @PostMapping("/register", consumes = ["multipart/form-data"])
@@ -82,3 +85,5 @@ class MemberController(
         return memberService.getProfileImage(username)
     }
 }
+
+data class CheckInfoUsername(val username: CheckUsername)
