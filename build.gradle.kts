@@ -28,6 +28,8 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
 	// Mysql 의존성
 	implementation("mysql:mysql-connector-java:8.0.33")
 	implementation("mysql:mysql-connector-java")

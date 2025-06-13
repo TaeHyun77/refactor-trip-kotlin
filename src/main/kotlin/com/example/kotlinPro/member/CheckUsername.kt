@@ -1,0 +1,52 @@
+package com.example.kotlinPro.member
+
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import io.github.oshai.kotlinlogging.KotlinLogging
+
+private val log = KotlinLogging.logger {}
+
+@JsonDeserialize(using = CheckUsernameDeserializer::class) // 커스텀 역직렬화 지정
+@JvmInline
+value class CheckUsername private constructor (val username: String) {
+
+    companion object {
+        private val USERNAME_REGEX = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#%*^])[A-Za-z\\d@#%*^]+$")
+
+        // 직접 CheckUsername 인스턴스를 생성할 때 사용할 수 있는 invoke 오버로딩
+        operator fun invoke(username: String): CheckUsername = CheckUsername(username)
+    }
+
+    init {
+        validateUsername(username)
+    }
+
+    private fun validateUsername(username: String) {
+        require(USERNAME_REGEX.matchEntire(username) != null) {
+            "유효하지 않은 아이디 형식입니다."
+        }
+    }
+}
+
+// 커스텀 역직렬화 클래스 정의
+class CheckUsernameDeserializer : JsonDeserializer<CheckUsername>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): CheckUsername {
+
+        val username = p.valueAsString
+        log.info { "공백, 하이픈 제거" }
+
+        val cleanedUsername = username.removeSpacesAndHyphens()
+
+        return CheckUsername(cleanedUsername)
+    }
+}
+
+fun String.removeSpacesAndHyphens(): String {
+    if (this.contains(' ') || this.contains('-')) {
+        return this.replace("[\\s-]".toRegex(), "")
+    }
+
+    return this
+}

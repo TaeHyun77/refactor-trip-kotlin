@@ -20,4 +20,3 @@ data class MemberResDto (
     val followings: List<String>? = null,
     val messageList: List<MessageResDto>? = null
 )
-{}
